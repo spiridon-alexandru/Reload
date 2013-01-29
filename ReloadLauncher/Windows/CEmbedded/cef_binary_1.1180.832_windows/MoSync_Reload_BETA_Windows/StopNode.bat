@@ -3,4 +3,4 @@ echo off
 set running=0
 for %%T in (`tasklist /nh /fi "imagename eq node.exe"`) do set running=1
 
-IF %running% EQU 1 taskkill /im node.exe /f
+IF %running% EQU 1 taskkill /im node.exe
