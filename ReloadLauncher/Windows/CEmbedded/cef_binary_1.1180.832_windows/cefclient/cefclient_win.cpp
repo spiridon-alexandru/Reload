@@ -214,28 +214,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam,
   PAINTSTRUCT ps;
   HDC hdc;
 
-  if (hWnd == editWnd) {
-    // Callback for the edit window
-    switch (message) {
-    case WM_CHAR:
-      if (wParam == VK_RETURN && g_handler.get()) {
-        // When the user hits the enter key load the URL
-        CefRefPtr<CefBrowser> browser = g_handler->GetBrowser();
-        wchar_t strPtr[MAX_URL_LENGTH+1] = {0};
-        *((LPWORD)strPtr) = MAX_URL_LENGTH;
-        LRESULT strLen = SendMessage(hWnd, EM_GETLINE, 0, (LPARAM)strPtr);
-        if (strLen > 0) {
-          strPtr[strLen] = 0;
-          browser->GetMainFrame()->LoadURL(strPtr);
-        }
-
-        return 0;
-      }
-    }
-
-    return (LRESULT)CallWindowProc(editWndOldProc, hWnd, message, wParam,
-                                   lParam);
-  } else if (message == uFindMsg) {
+  if (message == uFindMsg) {
     return 0;
   } else {
     // Callback for the main window
@@ -248,22 +227,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam,
 	  // Create the child windows used for navigation
       RECT rect;
       GetClientRect(hWnd, &rect);
-
-// TODO SA: add this to see the edit url box
-/*      editWnd = CreateWindow(L"EDIT", 0,
-                              WS_CHILD | WS_VISIBLE | WS_BORDER | ES_LEFT |
-                              ES_AUTOVSCROLL | ES_AUTOHSCROLL| WS_DISABLED,
-                              0, 0, rect.right,
-                              URLBAR_HEIGHT, hWnd, 0, hInst, 0);
-
-      // Assign the edit window's WNDPROC to this function so that we can
-      // capture the enter key
-      editWndOldProc =
-          reinterpret_cast<WNDPROC>(GetWindowLongPtr(editWnd, GWLP_WNDPROC));
-      SetWindowLongPtr(editWnd, GWLP_WNDPROC,
-          reinterpret_cast<LONG_PTR>(WndProc));
-      g_handler->SetEditHwnd(editWnd);
-      g_handler->SetButtonHwnds(backWnd, forwardWnd, reloadWnd, stopWnd); */
 
       CefWindowInfo info;
       CefBrowserSettings settings;
@@ -296,8 +259,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam,
           std::wstringstream ss;
           ss << L"Console messages will be written to "
               << std::wstring(CefString(g_handler->GetLogFile()));
-          MessageBox(hWnd, ss.str().c_str(), L"Console Messages",
-              MB_OK | MB_ICONINFORMATION);
         }
         return 0;
       case ID_WARN_DOWNLOADCOMPLETE:
@@ -348,15 +309,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam,
         RECT rect;
         GetClientRect(hWnd, &rect);
 
-// TODO SA: add the commented code if you want to resize the edit url box if the window resizes
-//        rect.top += URLBAR_HEIGHT;
-
         int urloffset = rect.left;
-
         HDWP hdwp = BeginDeferWindowPos(1);
-
-//		hdwp = DeferWindowPos(hdwp, editWnd, NULL, urloffset,
-//          0, rect.right - urloffset, URLBAR_HEIGHT, SWP_NOZORDER);
         
 		hdwp = DeferWindowPos(hdwp, g_handler->GetBrowserHwnd(), NULL,
           rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top,
@@ -417,7 +371,7 @@ void StartReloadServer(void *ID)
 	// Uses '_popen()' to execute the batch command.
 //	std::string result = ExecuteCommand("cd \"MoSync_Reload_BETA_Windows\\server\" & start bin\\win\\node.exe ReloadServer.js");
 	// Uses 'system()' to execute the batch command.
-	ExecuteSystemCommand("cd \"MoSync_Reload_BETA_Windows\" & call StartReloadServer.bat");
+	ExecuteSystemCommand("call StartReloadServer.bat");
 }
 
 //
@@ -428,7 +382,7 @@ void StartReloadServer(void *ID)
 //
 void StopReloadServer()
 {
-	ExecuteSystemCommand("cd \"MoSync_Reload_BETA_Windows\" & call StopNode.bat");
+	ExecuteSystemCommand("call StopNode.bat");
 }
 
 //

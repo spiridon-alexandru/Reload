@@ -28,7 +28,7 @@ ClientHandler::ClientHandler()
     if (commandLine->HasSwitch(cefclient::kUrl))
       m_StartupURL = commandLine->GetSwitchValue(cefclient::kUrl);
     else
-      m_StartupURL = "http://localhost:8282/UI/index.html";
+      m_StartupURL = "http://localhost:8283";
   }
 }
 
