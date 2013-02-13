@@ -44,3 +44,9 @@ ipch/
 *.opensdf
 *.sdf
 *.cachefile
+
+#cef client
+Release/cefclient.exe
+Release/lib/libcef_dll_wrapper.lib
+Debug/cefclient.exe
+Debug/lib/libcef_dll_wrapper.lib
